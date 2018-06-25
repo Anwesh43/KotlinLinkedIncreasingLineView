@@ -101,7 +101,7 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
         fun draw(canvas : Canvas, paint : Paint) {
             val w : Float = canvas.width.toFloat()
             val h : Float = canvas.height.toFloat()
-            val hGap : Float = h / IL_NODES
+            val hGap : Float = (h * 0.95f) / IL_NODES
             val wGap : Float = (w * 0.95f) / IL_NODES
             prev?.draw(canvas, paint)
             paint.strokeWidth = Math.min(w, h) / 60
