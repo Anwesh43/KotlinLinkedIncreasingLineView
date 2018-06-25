@@ -6,6 +6,7 @@ package com.anwesh.uiprojects.linkedincreasinglineview
 import android.app.Activity
 import android.view.MotionEvent
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.view.View
 import android.graphics.Paint
 import android.graphics.Canvas
@@ -101,7 +102,7 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
             val w : Float = canvas.width.toFloat()
             val h : Float = canvas.height.toFloat()
             val hGap : Float = h / IL_NODES
-            val wGap : Float = w / IL_NODES
+            val wGap : Float = (w * 0.95f) / IL_NODES
             prev?.draw(canvas, paint)
             paint.strokeWidth = Math.min(w, h) / 60
             paint.strokeCap = Paint.Cap.ROUND
@@ -183,6 +184,7 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
 
     companion object {
         fun create(activity : Activity) : LinkedIncreasingLineView {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             val view : LinkedIncreasingLineView = LinkedIncreasingLineView(activity)
             activity.setContentView(view)
             return view
