@@ -84,7 +84,7 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
         private var prev : ILNode? = null
 
         init {
-
+            addNeighbor()
         }
 
         fun addNeighbor() {
