@@ -51,7 +51,7 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
 
     data class ILAnimator(var view : View, var animated : Boolean = false) {
 
-        fun start(cb : () -> Unit) {
+        fun animate(cb : () -> Unit) {
             if (animated) {
                 cb()
                 try {
@@ -154,4 +154,27 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
             curr.startUpdating(startcb)
         }
     }
-}
+
+    data class Renderer(var view : LinkedIncreasingLineView) {
+
+        private val lil : LinkedIncreasingLine = LinkedIncreasingLine(0)
+
+        private val animator : ILAnimator = ILAnimator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
+            lil.draw(canvas, paint)
+            animator.animate {
+                lil.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            lil.startUpdating {
+                animator.start()
+            }
+        }
+    }
+ }
