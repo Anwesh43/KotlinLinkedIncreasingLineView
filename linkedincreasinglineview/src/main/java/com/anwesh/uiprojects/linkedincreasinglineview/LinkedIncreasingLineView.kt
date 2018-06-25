@@ -3,6 +3,7 @@ package com.anwesh.uiprojects.linkedincreasinglineview
 /**
  * Created by anweshmishra on 26/06/18.
  */
+import android.app.Activity
 import android.view.MotionEvent
 import android.content.Context
 import android.view.View
@@ -177,6 +178,14 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
             lil.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : LinkedIncreasingLineView {
+            val view : LinkedIncreasingLineView = LinkedIncreasingLineView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
  }
