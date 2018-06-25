@@ -20,6 +20,12 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
 
     private val renderer : Renderer = Renderer(this)
 
+    private var lilCompletionListener : LILCompletionListener? = null
+
+    fun addCompletionListener(onComplete : (Int) -> Unit) {
+        lilCompletionListener = LILCompletionListener(onComplete)
+    }
+
     override fun onDraw(canvas : Canvas) {
         renderer.render(canvas, paint)
     }
@@ -114,8 +120,10 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
             canvas.restore()
         }
 
-        fun update(stopcb : (Float) -> Unit) {
-            state.update(stopcb)
+        fun update(stopcb : (Int, Float) -> Unit) {
+            state.update {
+                stopcb(i, it)
+            }
         }
 
         fun startUpdating(startcb : () -> Unit) {
@@ -145,12 +153,12 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
             curr.draw(canvas, paint)
         }
 
-        fun update(stopcb : (Float) -> Unit) {
-            curr.update {
+        fun update(stopcb : (Int, Float) -> Unit) {
+            curr.update {j, scale ->
                 curr = curr.getNext(dir) {
                     dir *= -1
                 }
-                stopcb(it)
+                stopcb(j, scale)
             }
         }
 
@@ -169,8 +177,13 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
             canvas.drawColor(Color.parseColor("#212121"))
             lil.draw(canvas, paint)
             animator.animate {
-                lil.update {
+                lil.update {j, scale ->
                     animator.stop()
+                    when(scale) {
+                        1f -> {
+                            view.lilCompletionListener?.onComplete?.invoke(j)
+                        }
+                    }
                 }
             }
         }
@@ -190,4 +203,6 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
             return view
         }
     }
+
+    data class LILCompletionListener(var onComplete : (Int) -> Unit)
  }
