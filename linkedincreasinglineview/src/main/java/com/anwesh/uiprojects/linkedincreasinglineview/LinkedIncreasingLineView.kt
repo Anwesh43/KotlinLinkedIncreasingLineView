@@ -8,6 +8,9 @@ import android.content.Context
 import android.view.View
 import android.graphics.Paint
 import android.graphics.Canvas
+import android.graphics.Color
+
+val IL_NODES : Int = 5
 
 class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
 
@@ -71,6 +74,60 @@ class LinkedIncreasingLineView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class ILNode(var i : Int, private val state : ILState = ILState()) {
+
+        private var next : ILNode? = null
+
+        private var prev : ILNode? = null
+
+        init {
+
+        }
+
+        fun addNeighbor() {
+            if (i < IL_NODES - 1) {
+                next = ILNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            val w : Float = canvas.width.toFloat()
+            val h : Float = canvas.height.toFloat()
+            val hGap : Float = h / IL_NODES
+            val wGap : Float = w / IL_NODES
+            prev?.draw(canvas, paint)
+            paint.strokeWidth = Math.min(w, h) / 60
+            paint.strokeCap = Paint.Cap.ROUND
+            paint.color = Color.parseColor("#01579B")
+            canvas.save()
+            canvas.translate(wGap * i + wGap * state.scale,h/2)
+            val hy : Float = (hGap * i + hGap * state.scale) / 2
+            canvas.drawLine(0f, -hy, 0f, hy, paint)
+            canvas.restore()
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            state.update(stopcb)
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : ILNode {
+            var curr : ILNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
